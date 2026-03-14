@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withErrorHandler } from "@/middleware/errorHandler";
 
+type Context = { params: Promise<{ slug: string }> };
+
 // GET /api/posts/[slug] — public
 async function handler(
   _req: NextRequest,
-  context: { params: Promise<{ slug: string }> }
+  context: unknown
 ): Promise<NextResponse> {
-  const { slug } = await context.params;
+  const { slug } = await (context as Context).params;
 
   const post = await prisma.post.findFirst({
     where: { slug, status: "PUBLISHED" },
