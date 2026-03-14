@@ -5,8 +5,8 @@ import { withErrorHandler } from "@/middleware/errorHandler";
 
 type Context = { params: Promise<{ id: string }> };
 
-async function handler(req: NextRequest, context: Context): Promise<NextResponse> {
-  const { id } = await context.params;
+async function handler(req: NextRequest, context: unknown): Promise<NextResponse> {
+  const { id } = await (context as Context).params;
   const userId = getUserId(req)!;
   const role = getUserRole(req)!;
 
