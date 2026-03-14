@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  USER
+  AUTHOR
+  ADMIN
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  username     String    @unique
+  name         String
+  passwordHash String
+  role         Role      @default(USER)
+  avatar       String?
+  createdAt    DateTime  @default(now())
+
+  posts    Post[]
+  comments Comment[]
+
+  @@index([email])
+  @@index([username])
+}
+
+model Post {
+  id           String     @id @default(cuid())
+  title        String
+  slug         String     @unique
+  excerpt      String?
+  content      String     @db.Text
+  featuredImage String?
+  status       PostStatus @default(DRAFT)
+  publishedAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  author     User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId   String
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId String?
+  comments   Comment[]
+
+  @@index([slug])
+  @@index([authorId])
+  @@index([status])
+  @@index([categoryId])
+}
+
+model Category {
+  id    String @id @default(cuid())
+  name  String
+  slug  String @unique
+  posts Post[]
+
+  @@index([slug])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+
+  @@index([postId])
+}
