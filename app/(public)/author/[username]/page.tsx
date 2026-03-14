@@ -1,3 +1,4 @@
+
 import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
 import PostCard from "@/components/public/PostCard";

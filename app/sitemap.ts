@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { prisma } from "@/lib/prisma";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://chronicle.dev";
 
@@ -12,7 +13,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic post pages — fetch from DB at build time
   try {
-    const { prisma } = await import("@/lib/prisma");
     const posts = await prisma.post.findMany({
       where: { status: "PUBLISHED" },
       select: { slug: true, updatedAt: true },
