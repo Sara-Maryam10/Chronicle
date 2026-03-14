@@ -9,8 +9,8 @@ import { withErrorHandler } from "@/middleware/errorHandler";
 type Context = { params: Promise<{ postId: string }> };
 
 // ── GET /api/posts/by-id/[postId] — owner or ADMIN (for edit page prefill) ───
-async function getPost(req: NextRequest, context: Context): Promise<NextResponse> {
-  const { postId } = await context.params;
+async function getPost(req: NextRequest, context: unknown): Promise<NextResponse> {
+  const { postId } = await (context as Context).params;
   const userId     = getUserId(req)!;
   const role       = getUserRole(req)!;
 
@@ -24,7 +24,6 @@ async function getPost(req: NextRequest, context: Context): Promise<NextResponse
 
   if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 });
 
-  // Only owner or admin can fetch (includes drafts)
   if (post.authorId !== userId && role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -33,8 +32,8 @@ async function getPost(req: NextRequest, context: Context): Promise<NextResponse
 }
 
 // ── PUT /api/posts/by-id/[postId] — owner or ADMIN ───────────────────────────
-async function updatePost(req: NextRequest, context: Context): Promise<NextResponse> {
-  const { postId } = await context.params;
+async function updatePost(req: NextRequest, context: unknown): Promise<NextResponse> {
+  const { postId } = await (context as Context).params;
   const userId     = getUserId(req)!;
   const role       = getUserRole(req)!;
 
@@ -78,8 +77,8 @@ async function updatePost(req: NextRequest, context: Context): Promise<NextRespo
 }
 
 // ── DELETE /api/posts/by-id/[postId] — owner or ADMIN ────────────────────────
-async function deletePost(req: NextRequest, context: Context): Promise<NextResponse> {
-  const { postId } = await context.params;
+async function deletePost(req: NextRequest, context: unknown): Promise<NextResponse> {
+  const { postId } = await (context as Context).params;
   const userId     = getUserId(req)!;
   const role       = getUserRole(req)!;
 
