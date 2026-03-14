@@ -13,7 +13,6 @@ export function sanitizeHtml(dirty: string): string {
       "a", "img", "hr",
     ],
     ALLOWED_ATTR: ["href", "src", "alt", "title", "target", "rel"],
-    FORBID_SCRIPTS: true,
     FORBID_TAGS: ["style", "iframe", "form", "input"],
   });
 }
